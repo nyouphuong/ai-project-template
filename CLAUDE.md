@@ -31,7 +31,11 @@ Xong việc ĐỪNG tóm tắt lại code vừa viết — tao đọc code là b
 Chỉ báo: đã làm gì, còn vướng gì. Thiếu thông tin để quyết → DỪNG, hỏi, đừng đoán.
 
 ## Vùng cấm (hook chặn cứng, không lách được kể cả qua Bash)
-`docs/governance/` · `.claude/policy.json` · `.claude/settings.json` · `.claude/hooks/` · `.github/` · `.git/`
+docs/vung-cam-dung-thuc-te
+`docs/ba/` · `docs/governance/` · `LICENSE` · `.github/` · `.git/`
+`.claude/policy.json` · `.claude/settings.json` · `.claude/hooks/`
+(`.claude/stack.json` và `docs/knowledge/` KHÔNG cấm — cứ sửa thoải mái.)
+
 Cần đổi mấy chỗ đó → **DỪNG**, nói rõ chỗ cần đổi, để người dùng tự sửa.
 
 ## Vùng ghi được nhưng phải báo (`reviewPaths`)
