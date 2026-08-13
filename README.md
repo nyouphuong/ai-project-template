@@ -16,6 +16,29 @@ bằng cơ chế cưỡng chế của harness chứ không bằng lời khuyên 
 
 Yêu cầu: **Node.js** (chạy hook). Không có node → hook tự bỏ qua, không làm chết session.
 
+## Áp vào dự án ĐÃ CÓ SẴN
+
+```bash
+cd /duong/dan/du-an-cu
+node /d/AI_Task/ai-project-template/install.mjs --dry-run   # xem trước, không ghi gì
+node /d/AI_Task/ai-project-template/install.mjs             # cài thật
+```
+
+Installer tự làm:
+
+| Việc | Chi tiết |
+|---|---|
+| Copy `.claude/`, `CLAUDE.md`, `.gitattributes` | **Không đè** file sẵn có — chỉ báo để mày tự gộp |
+| Bắt bẫy `.gitignore` | Cảnh báo nếu repo đang ignore `.claude/` (làm mất sạch hook khi đồng đội clone) |
+| Dò stack → `stack.json` | Node/pnpm·yarn·bun, Python/uv·poetry, Go, Rust, .NET, Maven, Gradle, PHP — đọc luôn `scripts` trong `package.json` |
+| Sinh `policy.json` | Chỉ đưa vào `protectedPaths` những vùng **có thật** trong repo: `db/migrations/`, `terraform/`, `.github/workflows/`, `proto/`, `openapi.yaml`… |
+| Rà `permissions.deny` | Chỉ nhắc thư mục build có thật mà deny-list chưa phủ |
+
+Cờ `--force` cho phép ghi đè `policy.json`/`stack.json` đã có.
+
+**Phần installer KHÔNG làm thay được** (cần người đọc hiểu nghiệp vụ): quyết định cuối cùng
+vùng nào đáng khoá. Nó chỉ đề xuất theo pattern thư mục. Rà lại `policy.json` trước khi tin.
+
 ## 3 cơ chế tiết kiệm token
 
 **1. CLAUDE.md ngắn.** Chỉ file này được đọc tự động mỗi session. Mọi thứ khác
