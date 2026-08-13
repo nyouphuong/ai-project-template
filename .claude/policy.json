@@ -3,7 +3,6 @@
   "protectedPaths": {
     "_readme": "Đường dẫn AI KHÔNG được ghi/sửa/xoá. Hook chặn cứng ở PreToolUse, kể cả khi lách qua Bash. Dạng: thư mục, file, hoặc glob (*, **).",
     "paths": [
-      "docs/ba/",
       "docs/governance/",
       ".claude/policy.json",
       ".claude/settings.json",
@@ -11,7 +10,13 @@
       ".github/",
       ".git/"
     ],
-    "reason": "docs/ba/ là spec đã chốt với khách; docs/governance/ là luật dự án; .claude/policy.json + settings.json + hooks/ là cơ chế cưỡng chế; .github/ chứa CI/workflow/CODEOWNERS quyết định luật merge; .git/ chứa remote config — sửa được thì đổi được nơi code được push tới. Muốn đổi thì người sửa, không phải AI."
+    "reason": "docs/governance/ là luật dự án; .claude/policy.json + settings.json + hooks/ là cơ chế cưỡng chế; .github/ chứa CI/workflow/CODEOWNERS quyết định luật merge; .git/ chứa remote config — sửa được thì đổi được nơi code được push tới. Muốn đổi thì người sửa, không phải AI."
+  },
+  "reviewPaths": {
+    "_readme": "AI ĐƯỢC sửa (hook local không chặn), nhưng CI đánh trượt mọi PR đụng vào đây cho tới khi gắn nhãn governance-change. Dùng cho vùng cần AI soạn thảo nhưng thay đổi phải đập vào mắt người duyệt, không được trôi lẫn trong PR lớn.",
+    "paths": [
+      "docs/ba/"
+    ]
   },
   "secretScan": {
     "_readme": "Chặn ghi secret hardcode vào code. Bỏ qua các đường dẫn dưới đây (nơi hợp lệ để chứa secret, hoặc chứa giá trị ví dụ).",
