@@ -41,6 +41,13 @@ const norm = (p) =>
     .replace(/\/+$/, '')
     .toLowerCase();
 
+/**
+ * Chuẩn hoá CÂU LỆNH — khác `norm()` ở chỗ KHÔNG cắt dấu `/` cuối.
+ * `norm()` viết cho đường dẫn; đem áp lên cả câu lệnh thì `rm -rf .git/`
+ * biến thành `rm -rf .git`, làm mọi so khớp thư mục trượt sạch.
+ */
+const normCmd = (s) => String(s ?? '').replace(/\\/g, '/').toLowerCase();
+
 function relToRoot(abs) {
   const r = norm(ROOT);
   const a = norm(abs);
@@ -78,6 +85,52 @@ function pathMatches(rel, pattern) {
   if (!p) return false;
   if (p.includes('*')) return globToRe(p).test(rel);
   return rel === p || rel.startsWith(p + '/');
+}
+
+/**
+ * Dò xem lệnh shell có nhắc tới `pattern` như một ĐƯỜNG DẪN hay không.
+ *
+ * Trước đây dùng `cmd.includes(needle)` sau khi đã cắt dấu `/` cuối, nên needle
+ * `.git` khớp luôn với `.gitignore`, `api.github.com`, `repo.git`, `.gitkeep`.
+ * Giờ bắt buộc khớp ở ranh giới đường dẫn:
+ *   - pattern là thư mục  -> ngay sau tên phải là `/`
+ *   - pattern là file     -> ngay sau phải là hết chuỗi hoặc ký tự ngăn cách
+ * Ký tự đứng trước phải là đầu chuỗi / khoảng trắng / nháy / `=` `(` `:` `;` `|` `&` `/`.
+ * Giữ `/` trong nhóm đó để đường dẫn tuyệt đối vẫn khớp.
+ */
+const escRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const PRE = '(^|[\\s"\'`=(:;|&/])';
+
+function cmdMentionsPath(cmd, pattern) {
+  const raw = String(pattern).replace(/\\/g, '/').replace(/^\.\//, '').toLowerCase();
+  if (!raw || raw.includes('*')) return false;
+  const body = escRe(raw.replace(/\/$/, ''));
+  // Ngay sau tên phải là ranh giới: `/`, khoảng trắng, nháy, toán tử shell, hoặc
+  // hết chuỗi. Thiếu khoảng trắng thì `mv .github old` lọt; thiếu `$` thì
+  // `rm -rf .claude/hooks` lọt. An toàn vì PRE đã chặn phía trước —
+  // `b.git ` và `api.github.com` đều trượt ở ký tự đứng trước.
+  return new RegExp(PRE + body + '([/\\s"\'`):;|&]|$)').test(cmd);
+}
+
+/**
+ * Lệnh có ghi ra đĩa không.
+ *
+ * Regex cũ `/>>?\s*\S/` khớp MỌI dấu `>`, kể cả `=>` của arrow function,
+ * `->` của PHP, `>=` so sánh, và `2>&1`. Nó chặn nhầm 5 lần chỉ trong một phiên.
+ * Bản mới yêu cầu `>` phải là redirect thật:
+ *   - không đứng sau `= < > ! ~ + * / % -`  (loại `=>`, `->`, `-->`)
+ *   - không theo sau bởi `=`                (loại `>=`)
+ *   - đích phải là tên file, không phải toán tử shell (loại `2>&1`)
+ */
+const REDIRECT = /(?<![=<>!~+*/%-])>>?(?!=)\s*[^\s&|;>]/;
+
+function writesToDisk(cmd) {
+  return (
+    /(^|[\s;&|(])(rm|mv|cp|tee|truncate|dd|chmod|chown)\s/.test(cmd) ||
+    /(^|\s)(sed|perl)\s+(-\S*\s+)*-i/.test(cmd) ||
+    REDIRECT.test(cmd) ||
+    /\bgit\s+(rm|mv|checkout|restore|clean|apply)\b/.test(cmd)
+  );
 }
 
 // ---------- secret rules ----------
@@ -161,17 +214,11 @@ const protectReason = cfg?.protectedPaths?.reason ?? '';
 
 // --- Bash: chặn ghi/xoá vào vùng protected qua shell ---
 if (tool === 'Bash') {
-  const cmd = norm(ti.command);
+  const cmd = normCmd(ti.command);
   if (!cmd) allow();
-  const writesToDisk =
-    /(^|[\s;&|(])(rm|mv|cp|tee|truncate|dd|chmod|chown)\s/.test(cmd) ||
-    /(^|\s)(sed|perl)\s+(-\S*\s+)*-i/.test(cmd) ||
-    />>?\s*\S/.test(cmd) ||
-    /\bgit\s+(rm|mv|checkout|restore|clean|apply)\b/.test(cmd);
-  if (writesToDisk) {
+  if (writesToDisk(cmd)) {
     for (const p of protectedPaths) {
-      const needle = norm(p).replace(/^\.\//, '');
-      if (needle && !needle.includes('*') && cmd.includes(needle)) {
+      if (cmdMentionsPath(cmd, p)) {
         deny(
           `Lệnh này ghi/xoá vào vùng được bảo vệ "${p}" (khai báo ở .claude/policy.json → protectedPaths). ${protectReason}\n` +
             `Không tìm cách lách. Nếu thật sự cần đổi, DỪNG lại và báo người dùng tự sửa.`,
