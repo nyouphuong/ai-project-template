@@ -31,10 +31,16 @@ Xong việc ĐỪNG tóm tắt lại code vừa viết — tao đọc code là b
 Chỉ báo: đã làm gì, còn vướng gì. Thiếu thông tin để quyết → DỪNG, hỏi, đừng đoán.
 
 ## Vùng cấm (hook chặn cứng, không lách được kể cả qua Bash)
-`docs/ba/` · `docs/governance/` · `.claude/policy.json` · `.claude/settings.json` · `.claude/hooks/`
-(`.claude/stack.json` KHÔNG cấm — cứ sửa/điền hộ thoải mái.)
-
+`docs/governance/` · `.claude/policy.json` · `.claude/settings.json` · `.claude/hooks/` · `.github/` · `.git/`
 Cần đổi mấy chỗ đó → **DỪNG**, nói rõ chỗ cần đổi, để người dùng tự sửa.
+
+## Vùng ghi được nhưng phải báo (`reviewPaths`)
+`docs/ba/` — spec nghiệp vụ. Cứ soạn/sửa thoải mái, hook không chặn.
+NHƯNG mọi PR đụng vào đây bị CI đánh trượt tới khi người gắn nhãn `governance-change`.
+Nên: sửa spec thì **nói rõ trong phần báo cáo cuối**, đừng để nó trôi lẫn giữa thay đổi code.
+Sửa spec cho khớp code là sai hướng — code phải khớp spec, trừ khi người bảo ngược lại.
+
+`.claude/stack.json`, `docs/knowledge/` — ghi tự do, không cần báo.
 Secret hardcode bị chặn ghi → dùng `.env` + đọc qua biến môi trường.
 
 ## Quy trình task
