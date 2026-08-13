@@ -1,0 +1,28 @@
+{
+  "_readme": "CHÍNH SÁCH BẢO MẬT — chỉ người sửa, AI không sửa được (file này tự nằm trong protectedPaths). Đây là 'sợi xích': để AI sửa được thì nó tự tháo được. Cấu hình tiện ích (lệnh build/test) ở .claude/stack.json.",
+
+  "protectedPaths": {
+    "_readme": "Đường dẫn AI KHÔNG được ghi/sửa/xoá. Hook chặn cứng ở PreToolUse, kể cả khi lách qua Bash. Dạng: thư mục, file, hoặc glob (*, **).",
+    "paths": [
+      "docs/ba/",
+      "docs/governance/",
+      ".claude/policy.json",
+      ".claude/settings.json",
+      ".claude/hooks/"
+    ],
+    "reason": "docs/ba/ là spec đã chốt với khách; docs/governance/ là luật dự án; .claude/policy.json + settings.json + hooks/ là cơ chế cưỡng chế. Muốn đổi thì người sửa, không phải AI."
+  },
+
+  "secretScan": {
+    "_readme": "Chặn ghi secret hardcode vào code. Bỏ qua các đường dẫn dưới đây (nơi hợp lệ để chứa secret, hoặc chứa giá trị ví dụ).",
+    "enabled": true,
+    "skipPaths": [
+      ".env",
+      ".env.*",
+      "**/*.example",
+      "**/*.sample",
+      "**/*.lock",
+      ".claude/hooks/"
+    ]
+  }
+}

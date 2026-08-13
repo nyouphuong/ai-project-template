@@ -1,0 +1,48 @@
+# ─────────────────────────────────────────────────────────
+# QUAN TRỌNG: KHÔNG ignore .claude/
+# Toàn bộ hook, agent, policy nằm trong đó — đó là phần chính
+# của template. Chỉ loại file override cá nhân bên dưới.
+# ─────────────────────────────────────────────────────────
+.claude/settings.local.json
+
+# Secret — không bao giờ commit
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.p12
+credentials.json
+
+# Dependencies
+node_modules/
+vendor/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Build output
+dist/
+build/
+out/
+target/
+obj/
+.next/
+.nuxt/
+
+# Test / coverage
+coverage/
+.pytest_cache/
+.nyc_output/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Logs
+*.log
+npm-debug.log*

@@ -1,0 +1,20 @@
+{
+  "_readme": "Cấu hình TIỆN ÍCH của dự án. AI ĐƯỢC sửa file này (nhờ nó điền hộ cũng được). Chính sách bảo mật nằm ở .claude/policy.json — file đó AI không sửa được.",
+
+  "commands": {
+    "_readme": "Điền lệnh thật của dự án. Claude đọc mục này thay vì tự đoán / dò package.json — đỡ vài nghìn token mỗi session. Để rỗng nghĩa là dự án không có lệnh đó.",
+    "install": "",
+    "dev": "",
+    "build": "",
+    "test": "",
+    "testOne": "",
+    "lint": "",
+    "format": "",
+    "typecheck": ""
+  },
+
+  "notes": {
+    "_readme": "Ghi chú riêng của dự án mà AI cần biết nhưng không đáng nhét vào CLAUDE.md (vốn bị giới hạn 500 token).",
+    "items": []
+  }
+}

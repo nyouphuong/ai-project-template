@@ -1,0 +1,7 @@
+# Chuẩn hoá line ending: repo luôn lưu LF, checkout theo OS.
+# Tránh cảnh báo CRLF trên Windows và diff rác khi nhiều máy cùng làm.
+* text=auto eol=lf
+
+# Script hook phải là LF, kể cả trên Windows (bash/node đọc shebang)
+*.mjs text eol=lf
+*.sh  text eol=lf
