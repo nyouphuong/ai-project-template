@@ -4,6 +4,10 @@
 # ruleset. GitHub không cho tự duyệt PR của chính mình, nên bật lên là tự khoá
 # mình ra ngoài vĩnh viễn. Giữ file này ở vai trò đánh dấu + tự request review.
 # Việc chặn thật do .github/workflows/governance-guard.yml lo.
+#
+# PR nào đụng vào các đường dẫn cưỡng chế bên dưới sẽ bị CI đánh trượt cho tới khi
+# gắn nhãn `governance-change`. Gắn nhãn là thao tác trên giao diện GitHub — AI chạy
+# dưới máy không làm được. Đó là chốt chặn, đừng gắn nhãn theo phản xạ.
 
 # Mặc định
 *                           @nyouphuong

@@ -10,7 +10,7 @@ Format: `- [tiêu đề](file.md) — mồi nhử để biết có nên mở kh�
 - *(chưa có)*
 
 ## Cạm bẫy / hành vi bất ngờ
-- *(chưa có)*
+- [Guard chặn nhầm lệnh có arrow function](guard-arrow-false-positive.md) — do `=>`, không do tên đường dẫn
 
 ## Quy ước ngầm (code không nói ra)
 - *(chưa có)*
