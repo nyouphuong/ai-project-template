@@ -24,13 +24,21 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Danh sách vùng cấm đọc THẲNG từ policy.json — một nguồn sự thật duy nhất.
+      # Chép tay sang đây là sớm muộn hai bên lệch nhau, rồi tưởng có canh mà không canh.
+      # protectedPaths: hook local chặn AI ghi.
+      # reviewPaths   : AI ghi được, nhưng PR vẫn phải qua nhãn.
+      # Cả hai đều cần CI soi, vì hook local chỉ có tác dụng với Claude Code —
+      # người dùng Copilot/Cursor hoặc sửa thẳng trên web thì chỉ CI mới bắt được.
       - name: Dò file cưỡng chế bị đổi
         id: diff
         run: |
+          mapfile -t PATHS < <(jq -r '((.protectedPaths.paths // []) + (.reviewPaths.paths // []))[]' .claude/policy.json | sed 's#/$##')
+          echo "Đang canh ${#PATHS[@]} đường dẫn: ${PATHS[*]}"
           CHANGED=$(git diff --name-only \
             "${{ github.event.pull_request.base.sha }}" \
             "${{ github.event.pull_request.head.sha }}" \
-            -- '.claude/policy.json' '.claude/settings.json' '.claude/hooks' '.github' || true)
+            -- "${PATHS[@]}" || true)
           if [ -n "$CHANGED" ]; then echo "hit=true" >> "$GITHUB_OUTPUT"; else echo "hit=false" >> "$GITHUB_OUTPUT"; fi
           {
             echo "files<<___EOF___"
