@@ -7,6 +7,10 @@ name: Governance guard
 on:
   pull_request:
     branches: [main]
+    # `labeled`/`unlabeled` KHÔNG có trong danh sách mặc định. Thiếu nó thì gắn nhãn
+    # xong chẳng có run mới nào chạy, phải bấm "Re-run" — mà re-run lại phát lại
+    # payload cũ (lúc chưa có nhãn) nên vẫn trượt.
+    types: [opened, synchronize, reopened, labeled, unlabeled]
 
 permissions:
   contents: read
@@ -42,8 +46,25 @@ jobs:
           echo "${{ steps.diff.outputs.files }}" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
 
+      # Đọc nhãn LIVE từ API. Không dùng github.event.pull_request.labels vì đó là
+      # ảnh chụp lúc trigger — bấm "Re-run" sau khi gắn nhãn sẽ phát lại ảnh cũ.
+      - name: Đọc nhãn hiện tại của PR
+        id: label
+        if: steps.diff.outputs.hit == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          LABELS=$(gh pr view "${{ github.event.pull_request.number }}" \
+            --repo "${{ github.repository }}" --json labels --jq '.labels[].name')
+          echo "Nhãn đang có trên PR: ${LABELS:-(không có)}"
+          if printf '%s\n' "$LABELS" | grep -qx 'governance-change'; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Chặn nếu chưa gắn nhãn governance-change
-        if: steps.diff.outputs.hit == 'true' && !contains(github.event.pull_request.labels.*.name, 'governance-change')
+        if: steps.diff.outputs.hit == 'true' && steps.label.outputs.ok != 'true'
         run: |
           echo "::error::PR sửa file cưỡng chế governance mà chưa được duyệt."
           echo ""
