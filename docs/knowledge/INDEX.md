@@ -11,6 +11,7 @@ Format: `- [tiêu đề](file.md) — mồi nhử để biết có nên mở kh�
 
 ## Cạm bẫy / hành vi bất ngờ
 - [Guard chặn nhầm lệnh có arrow function](guard-arrow-false-positive.md) — do `=>`, không do tên đường dẫn
+- [Guard chặn nhầm `.gitignore` và `github.com`](guard-needle-substring.md) — so chuỗi con thay vì ranh giới đường dẫn
 
 ## Quy ước ngầm (code không nói ra)
 - *(chưa có)*
