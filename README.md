@@ -39,7 +39,13 @@ Cờ `--force` cho phép ghi đè `policy.json`/`stack.json` đã có.
 **Phần installer KHÔNG làm thay được** (cần người đọc hiểu nghiệp vụ): quyết định cuối cùng
 vùng nào đáng khoá. Nó chỉ đề xuất theo pattern thư mục. Rà lại `policy.json` trước khi tin.
 
-## 3 cơ chế tiết kiệm token
+## 4 cơ chế tiết kiệm token
+
+**0. Sổ tay codebase — `docs/knowledge/`.** Ba cơ chế dưới đây giảm token của *một*
+session. Cái này giảm token của *mọi session sau*: thứ đã tốn công tìm ra thì ghi lại,
+lần sau đọc 5 dòng thay vì đọc lại 20 file. `INDEX.md` là mục lục một-dòng-một-note nên
+Claude biết note nào đáng mở mà không phải mở hết. Mỗi note ghi `commit:` lúc viết để
+phát hiện lúc nào nó đã lỗi thời. Đây là thư mục AI **được** ghi — khác `docs/ba/`.
 
 **1. CLAUDE.md ngắn.** Chỉ file này được đọc tự động mỗi session. Mọi thứ khác
 (`docs/ba/`, `docs/governance/`) chỉ nạp khi thật sự cần. Dài quá thì Claude bỏ qua nửa nội dung.
@@ -92,6 +98,9 @@ ghi/xoá cũng bị chặn — chấp nhận thà chặn nhầm còn hơn bỏ s
 docs/
   ba/               ← spec đã chốt             (AI không sửa được)
   governance/       ← luật dự án               (AI không sửa được)
+  knowledge/        ← sổ tay codebase          (AI GHI VÀO ĐÂY)
+    INDEX.md        ← mục lục, đọc trước khi đi tìm gì
+    _TEMPLATE.md    ← khuôn note
 tasks/
   current.md        ← việc đang làm
   backlog.md        ← việc chưa làm

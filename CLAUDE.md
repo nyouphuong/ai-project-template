@@ -9,6 +9,13 @@
 ## Lệnh build/test/lint
 Đọc `.claude/stack.json` → `commands`. ĐỪNG đoán, đừng dò `package.json`.
 
+## Sổ tay codebase — ĐỌC TRƯỚC KHI ĐI TÌM
+`docs/knowledge/INDEX.md` = mục lục những thứ đã tốn công tìm ra. Đọc nó **trước** khi
+grep hay giao `explorer` — nhiều khi câu trả lời có sẵn ở đó.
+Tốn >5 phút hoặc >3 file mới hiểu ra điều không hiển nhiên → GHI note mới theo
+`docs/knowledge/_TEMPLATE.md` rồi thêm 1 dòng vào INDEX. Bắt buộc kèm `file:line` + ngày + commit.
+KHÔNG ghi thứ đọc code là thấy ngay. Note sai tệ hơn không có note.
+
 ## Giao việc cho subagent (luật tiết kiệm token)
 
 **GIAO** khi phải quét **>3–4 file lớn**:

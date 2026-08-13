@@ -63,6 +63,16 @@ function copyTree(relDir) {
 
 copyTree('.claude/agents');
 copyTree('.claude/hooks');
+// Sổ tay codebase: chỉ mang mục lục + template sang, bỏ file ví dụ
+for (const f of ['docs/knowledge/INDEX.md', 'docs/knowledge/_TEMPLATE.md']) {
+  if (has(f)) {
+    note(`giữ nguyên (đã có)  ${f}`);
+  } else {
+    write(f, readFileSync(join(TEMPLATE, f), 'utf8'));
+    note(`tạo mới             ${f}`);
+  }
+}
+
 for (const f of ['.claude/settings.json', 'CLAUDE.md']) {
   if (has(f)) {
     note(`giữ nguyên (đã có)  ${f}`);
