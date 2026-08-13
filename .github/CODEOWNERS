@@ -1,0 +1,19 @@
+# Chủ sở hữu code — GitHub tự động request review khi các file này bị đụng.
+#
+# LƯU Ý cho repo một người: ĐỪNG bật "Require review from Code Owners" trong
+# ruleset. GitHub không cho tự duyệt PR của chính mình, nên bật lên là tự khoá
+# mình ra ngoài vĩnh viễn. Giữ file này ở vai trò đánh dấu + tự request review.
+# Việc chặn thật do .github/workflows/governance-guard.yml lo.
+
+# Mặc định
+*                           @nyouphuong
+
+# ── Cơ chế cưỡng chế: đổi mấy file này là đổi luật chơi ──
+/.claude/policy.json        @nyouphuong
+/.claude/settings.json      @nyouphuong
+/.claude/hooks/             @nyouphuong
+/.github/                   @nyouphuong
+
+# ── Tài liệu đã chốt ──
+/docs/ba/                   @nyouphuong
+/docs/governance/           @nyouphuong

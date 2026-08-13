@@ -1,0 +1,55 @@
+name: Governance guard
+
+# Chặn ở phía server — nằm ngoài tầm với của AI đang chạy trên máy.
+# AI sửa được file này trên máy, nhưng thay đổi đó hiện ra trong diff của PR,
+# và chính PR đó lại bị check này soi. Muốn tắt lén thì phải tắt công khai.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Dò file cưỡng chế bị đổi
+        id: diff
+        run: |
+          CHANGED=$(git diff --name-only \
+            "${{ github.event.pull_request.base.sha }}" \
+            "${{ github.event.pull_request.head.sha }}" \
+            -- '.claude/policy.json' '.claude/settings.json' '.claude/hooks' '.github' || true)
+          if [ -n "$CHANGED" ]; then echo "hit=true" >> "$GITHUB_OUTPUT"; else echo "hit=false" >> "$GITHUB_OUTPUT"; fi
+          {
+            echo "files<<___EOF___"
+            echo "$CHANGED"
+            echo "___EOF___"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Báo cáo
+        if: steps.diff.outputs.hit == 'true'
+        run: |
+          echo "### PR này sửa cơ chế cưỡng chế governance" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo "${{ steps.diff.outputs.files }}" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Chặn nếu chưa gắn nhãn governance-change
+        if: steps.diff.outputs.hit == 'true' && !contains(github.event.pull_request.labels.*.name, 'governance-change')
+        run: |
+          echo "::error::PR sửa file cưỡng chế governance mà chưa được duyệt."
+          echo ""
+          echo "File bị đổi:"
+          echo "${{ steps.diff.outputs.files }}"
+          echo ""
+          echo "Đây là chủ ý? Gắn nhãn 'governance-change' vào PR rồi chạy lại check."
+          echo "Gắn nhãn là thao tác trên giao diện GitHub — AI chạy trên máy không làm được."
+          exit 1
